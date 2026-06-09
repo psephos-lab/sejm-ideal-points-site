@@ -6,6 +6,8 @@ const CLUB_COLORS = {
   "Polska2050": "#FACC15", "Polska2050-TD": "#FACC15", "Lewica": "#E31E24",
   "Razem": "#951B81", "Konfederacja": "#1A1A1A", "Konfederacja_KP": "#4A4A4A",
   "Centrum": "#1DACD6", "Demokracja": "#00BFA5", "niez.": "#AAAAAA",
+  // IX kadencja (2019–2023)
+  "KP": "#00A550", "Kukiz15": "#16A085", "LD": "#C0398B", "PS": "#5D6D7E",
 };
 const color = (c) => CLUB_COLORS[c] || "#888";
 const R = 4;                                  // dot radius
@@ -21,26 +23,51 @@ let VOTES = null;                              // lazy-loaded votes.json (metada
 let MPVOTES = null;                            // lazy-loaded mp_votes.json (per-MP codes)
 let MODELPARAMS = null;                         // lazy-loaded model_params.json (beta/alpha)
 
+// Each term has its own precomputed JSON set. term10 keeps the bare filenames
+// (ideal_points.json …); other terms add a suffix (…_term9.json). `apiTerm` feeds
+// the official PDF link.
+const TERMS = {
+  "10": { label: "X kadencja", years: "od 2023",   suffix: "",       apiTerm: "term10" },
+  "9":  { label: "IX kadencja", years: "2019–2023", suffix: "_term9", apiTerm: "term9" },
+};
+let CURRENT_TERM = "10";
+const sfx = () => TERMS[CURRENT_TERM].suffix;
+
 const tooltip = document.getElementById("tooltip");
 
-fetch("ideal_points.json")
-  .then((r) => r.json())
-  .then((data) => {
-    DATA = data;
-    XEXT = d3.extent(data.mps, (d) => d.x);
-    data.clubs.forEach((c) => { CLUB_MEAN[c.club] = c.mean; });
-    document.getElementById("subtitle").textContent =
-      `${data.meta.term} · ${data.meta.n_mps} posłów · ${data.meta.n_votes} głosowań`;
-    document.getElementById("meta-line").textContent =
-      `Wygenerowano: ${data.meta.generated}. Źródło: ${data.meta.source}.`;
-    buildLegend(data);
-    render();
-    renderClubs(data);
-  })
-  .catch((e) => {
-    document.getElementById("subtitle").textContent = "Błąd ładowania danych.";
-    console.error(e);
-  });
+// Load (or switch to) a term: reset state, fetch its ideal_points, re-render.
+function loadTerm(key) {
+  if (!TERMS[key]) return;
+  CURRENT_TERM = key;
+
+  // reset all per-term state (clubs, lazy history data, selection differ by term)
+  DATA = null; activeClub = null; selected = null;
+  VOTES = MPVOTES = MODELPARAMS = null; CLUB_MEAN = {};
+  closeHistory(); closeProfile();
+  const s = document.getElementById("search"); if (s) s.value = "";
+  updateTermButtons();
+  document.getElementById("subtitle").textContent = `${TERMS[key].label} · ładowanie…`;
+
+  fetch(`ideal_points${TERMS[key].suffix}.json`)
+    .then((r) => r.json())
+    .then((data) => {
+      if (CURRENT_TERM !== key) return;          // a newer switch superseded this load
+      DATA = data;
+      XEXT = d3.extent(data.mps, (d) => d.x);
+      data.clubs.forEach((c) => { CLUB_MEAN[c.club] = c.mean; });
+      document.getElementById("subtitle").textContent =
+        `${data.meta.term} · ${data.meta.n_mps} posłów · ${data.meta.n_votes} głosowań`;
+      document.getElementById("meta-line").textContent =
+        `Wygenerowano: ${data.meta.generated}. Źródło: ${data.meta.source}.`;
+      buildLegend(data);
+      render();
+      renderClubs(data);
+    })
+    .catch((e) => {
+      document.getElementById("subtitle").textContent = "Błąd ładowania danych.";
+      console.error(e);
+    });
+}
 
 // ---------- legend ----------
 function buildLegend(data) {
@@ -315,9 +342,9 @@ async function openHistory(mp) {
   if (!VOTES) {
     try {
       const [v, mv, mpar] = await Promise.all([
-        fetch("votes.json").then((r) => r.json()),
-        fetch("mp_votes.json").then((r) => r.json()),
-        fetch("model_params.json").then((r) => r.json()).catch(() => ({})),
+        fetch(`votes${sfx()}.json`).then((r) => r.json()),
+        fetch(`mp_votes${sfx()}.json`).then((r) => r.json()),
+        fetch(`model_params${sfx()}.json`).then((r) => r.json()).catch(() => ({})),
       ]);
       VOTES = v.votes; MPVOTES = mv; MODELPARAMS = mpar;
     } catch (e) {
@@ -508,7 +535,7 @@ function partyBadge(pctZa) {
 }
 
 function rowHtml(v, mpCode, mpClub) {
-  const pdf = `https://api.sejm.gov.pl/sejm/term10/votings/${v.s}/${v.v}/pdf`;
+  const pdf = `https://api.sejm.gov.pl/sejm/${TERMS[CURRENT_TERM].apiTerm}/votings/${v.s}/${v.v}/pdf`;
   return `<div class="hist-item">
     <div class="hist-row">
       <div class="hr-date">${v.d}</div>
@@ -545,3 +572,17 @@ window.addEventListener("resize", () => {
     if (DATA) { render(); renderClubs(DATA); if (selected) renderMiniAxis(selected); }
   }, 200);
 });
+
+// ---------- term (kadencja) switcher ----------
+function updateTermButtons() {
+  document.querySelectorAll(".term-btn").forEach((b) => {
+    const on = b.dataset.term === CURRENT_TERM;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+}
+document.querySelectorAll(".term-btn").forEach((b) => {
+  b.addEventListener("click", () => loadTerm(b.dataset.term));
+});
+
+loadTerm("10");   // initial load (X kadencja, default)

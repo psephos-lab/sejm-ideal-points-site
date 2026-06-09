@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Punkty idealne posłów — Sejm X kadencji</title>
+  <title>Punkty idealne posłów Sejmu RP</title>
   <meta name="description" content="Bayesowska estymacja pozycji posłów Sejmu RP na głównej osi podziału, odtworzonej z głosowań imiennych (model przestrzenny / MCMC)." />
   <link rel="preconnect" href="https://d3js.org" />
   <link rel="stylesheet" href="style.css" />
@@ -11,7 +11,11 @@
 <body>
   <header>
     <h1>Punkty idealne posłów Sejmu</h1>
-    <p class="subtitle" id="subtitle">X kadencja · ładowanie…</p>
+    <p class="subtitle" id="subtitle">ładowanie…</p>
+    <div class="term-switch" role="group" aria-label="Wybór kadencji">
+      <button class="term-btn" data-term="9" aria-pressed="false">IX kadencja<small>2019–2023</small></button>
+      <button class="term-btn" data-term="10" aria-pressed="true">X kadencja<small>od 2023</small></button>
+    </div>
   </header>
 
   <main>

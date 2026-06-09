@@ -25,6 +25,18 @@ header {
 h1 { margin: 0 0 .2rem; font-size: 1.7rem; }
 .subtitle { margin: 0; color: var(--muted); font-size: .95rem; }
 
+/* ---- term (kadencja) switcher ---- */
+.term-switch { display: inline-flex; margin-top: .8rem; border: 1px solid var(--line);
+  border-radius: 10px; background: var(--card); padding: 3px; gap: 2px; }
+.term-btn { display: flex; flex-direction: column; align-items: center; line-height: 1.15;
+  border: none; background: none; cursor: pointer; padding: .35rem 1rem; border-radius: 8px;
+  font-size: .92rem; font-weight: 600; color: var(--muted); transition: background .15s, color .15s; }
+.term-btn small { font-size: .68rem; font-weight: 400; opacity: .8; }
+.term-btn:hover { background: #f0f0f0; }
+.term-btn.active { background: var(--accent); color: #fff; }
+.term-btn.active:hover { background: var(--accent); }
+.term-btn.active small { opacity: .85; }
+
 main { max-width: 1100px; margin: 0 auto; padding: 0 1.2rem 2rem; }
 
 .controls {
