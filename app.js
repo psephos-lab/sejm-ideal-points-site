@@ -8,6 +8,9 @@ const CLUB_COLORS = {
   "Centrum": "#1DACD6", "Demokracja": "#00BFA5", "niez.": "#AAAAAA",
   // IX kadencja (2019–2023)
   "KP": "#00A550", "Kukiz15": "#16A085", "LD": "#C0398B", "PS": "#5D6D7E",
+  // VIII kadencja (2015–2019)
+  "PO": "#F5821F", "PO-KO": "#F5821F", "PSL-KP": "#00A550", "PSL-UED": "#4CAF50",
+  "UPR": "#5D3A9B", "PP": "#A0522D", "TERAZ!": "#00ACC1", "WiS": "#9C27B0",
 };
 const color = (c) => CLUB_COLORS[c] || "#888";
 const R = 4;                                  // dot radius
@@ -29,6 +32,7 @@ let MODELPARAMS = null;                         // lazy-loaded model_params.json
 const TERMS = {
   "10": { label: "X kadencja", years: "od 2023",   suffix: "",       apiTerm: "term10" },
   "9":  { label: "IX kadencja", years: "2019–2023", suffix: "_term9", apiTerm: "term9" },
+  "8":  { label: "VIII kadencja", years: "2015–2019", suffix: "_term8", apiTerm: "term8" },
 };
 let CURRENT_TERM = "10";
 const sfx = () => TERMS[CURRENT_TERM].suffix;
