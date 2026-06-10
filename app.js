@@ -11,6 +11,11 @@ const CLUB_COLORS = {
   // VIII kadencja (2015–2019)
   "PO": "#F5821F", "PO-KO": "#F5821F", "PSL-KP": "#00A550", "PSL-UED": "#4CAF50",
   "UPR": "#5D3A9B", "PP": "#A0522D", "TERAZ!": "#00ACC1", "WiS": "#9C27B0",
+  // V–VII kadencja (2005–2015)
+  "PSL": "#00A550", "SLD": "#E31E24", "ZP": "#2C5AA0", "RP": "#C2185B",
+  "TR": "#AD1457", "BC": "#795548", "KPSP": "#8D6E63",
+  "Samoobrona": "#C9A227", "LPR": "#922B21", "RLN": "#117864",
+  "Prawica": "#7E5109", "SDPL": "#CB4335", "PJN": "#2471A3", "Polska_Plus": "#5499C7",
 };
 const color = (c) => CLUB_COLORS[c] || "#888";
 const R = 4;                                  // dot radius
@@ -33,6 +38,9 @@ const TERMS = {
   "10": { label: "X kadencja", years: "od 2023",   suffix: "",       apiTerm: "term10" },
   "9":  { label: "IX kadencja", years: "2019–2023", suffix: "_term9", apiTerm: "term9" },
   "8":  { label: "VIII kadencja", years: "2015–2019", suffix: "_term8", apiTerm: "term8" },
+  "7":  { label: "VII kadencja", years: "2011–2015", suffix: "_term7", apiTerm: "term7" },
+  "6":  { label: "VI kadencja", years: "2007–2011", suffix: "_term6", apiTerm: "term6" },
+  "5":  { label: "V kadencja", years: "2005–2007", suffix: "_term5", apiTerm: "term5" },
 };
 let CURRENT_TERM = "10";
 const sfx = () => TERMS[CURRENT_TERM].suffix;

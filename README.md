@@ -2,13 +2,13 @@
 
 **Interaktywna mapa pozycji posłów Sejmu na głównej osi podziału**,
 odtworzonej wyłącznie z głosowań imiennych — bez przypisywania partiom etykiet ideologicznych.
-Dostępne **trzy kadencje** (przełącznik u góry): **VIII (2015–2019)**, **IX (2019–2023)** i **X (od 2023)**.
+Dostępne **sześć kadencji** (przełącznik u góry): od **V (2005–2007)** do **X (od 2023)**.
 
 🔗 **Strona na żywo:** https://psephos-lab.github.io/sejm-ideal-points-site/
 
 ## Co tu znajdziesz
 
-- **Przełącznik kadencji** — VIII (2015–2019), IX (2019–2023) lub X (od 2023); każda liczona osobnym modelem.
+- **Przełącznik kadencji** — sześć kadencji od V (2005–2007) do X (od 2023); każda liczona osobnym modelem.
 - **Mapa izby** — każdy poseł jako punkt na osi, kolorowany klubem; wyszukiwarka i filtr klubów.
 - **Profil posła** (po kliknięciu) — pozycja z przedziałem ufności, ranga, frekwencja,
   lojalność klubowa, rozkład całej izby na tle posła, najbliżsi pozycją.
