@@ -68,7 +68,7 @@ function loadTerm(key) {
       XEXT = d3.extent(data.mps, (d) => d.x);
       data.clubs.forEach((c) => { CLUB_MEAN[c.club] = c.mean; });
       document.getElementById("subtitle").textContent =
-        `${data.meta.term} · ${data.meta.n_mps} posłów · ${data.meta.n_votes} głosowań`;
+        `${data.meta.term} · ${data.meta.n_mps} posłów · ${data.meta.n_votes} spornych głosowań`;
       document.getElementById("meta-line").textContent =
         `Wygenerowano: ${data.meta.generated}. Źródło: ${data.meta.source}.`;
       buildLegend(data);
@@ -191,11 +191,6 @@ document.getElementById("ci-toggle").addEventListener("change", (e) => {
   const g = document.getElementById("ci-group");
   if (g) g.setAttribute("display", showCI ? "inline" : "none");
 });
-document.getElementById("reset").addEventListener("click", () => {
-  activeClub = null; document.getElementById("search").value = "";
-  updateChips(); applyFilter();
-});
-
 // ---------- club averages panel ----------
 function renderClubs(data) {
   const svg = d3.select("#clubs");
@@ -432,26 +427,6 @@ function onBreakdownClick(e) {
 const VOTE_COL = { Y: "#1a9850", N: "#d73027", A: "#e0a800" };
 const voteName = (c) => (c === "Y" ? "Za" : c === "N" ? "Przeciw" : c === "A" ? "Wstrzymał się" : "nieobecny");
 
-function cuttingPoint(decided) {
-  // 1-D threshold on ideal point that best separates Za (y=1) from Przeciw (y=0)
-  if (decided.length < 2) return null;
-  const mY = d3.mean(decided.filter((d) => d.y === 1), (d) => d.x);
-  const mN = d3.mean(decided.filter((d) => d.y === 0), (d) => d.x);
-  const yRight = (mY ?? 0) >= (mN ?? 0);            // Za tends to higher x?
-  const xs = decided.map((d) => d.x).sort((a, b) => a - b);
-  let best = 0, bestErr = Infinity;
-  for (let i = 0; i <= xs.length; i++) {
-    const t = i === 0 ? xs[0] - 1 : i === xs.length ? xs[xs.length - 1] + 1 : (xs[i - 1] + xs[i]) / 2;
-    let err = 0;
-    for (const d of decided) {
-      const predYea = yRight ? d.x >= t : d.x < t;
-      if (predYea !== (d.y === 1)) err++;
-    }
-    if (err < bestErr) { bestErr = err; best = t; }
-  }
-  return { t: best, coherence: 1 - bestErr / decided.length };
-}
-
 function ncdf(z) {                                  // standard normal CDF (approx)
   const t = 1 / (1 + 0.2316419 * Math.abs(z));
   const d = 0.3989423 * Math.exp(-z * z / 2);
@@ -508,11 +483,6 @@ function renderBreakdown(vote, wrap) {
     const hit = decided.length
       ? decided.filter((d) => (beta * d.x - alpha > 0) === (d.y === 1)).length / decided.length : 0;
     capRight = `<span class="coh">model · x*=${xstar.toFixed(2)} · β=${beta.toFixed(1)} · ${Math.round(hit * 100)}% trafień</span>`;
-  } else {
-    const cut = cuttingPoint(decided);
-    if (cut) svg.append("line").attr("x1", x(cut.t)).attr("x2", x(cut.t)).attr("y1", m.top - 2).attr("y2", H - m.bottom)
-      .attr("stroke", "#333").attr("stroke-dasharray", "4 3").attr("stroke-width", 1.2);
-    if (cut) capRight = `<span class="coh">empiryczna · x=${cut.t.toFixed(2)} · ${Math.round(cut.coherence * 100)}% zgodne</span>`;
   }
 
   svg.append("line").attr("x1", m.left).attr("x2", W - m.right)
@@ -523,6 +493,33 @@ function renderBreakdown(vote, wrap) {
     .attr("cx", (n) => n.x).attr("cy", (n) => n.y).attr("r", R2)
     .attr("fill", (n) => VOTE_COL[n.o.v] || "#cfcfcf").attr("stroke", "#fff").attr("stroke-width", 0.4)
     .append("title").text((n) => `${n.o.mp.name} (${n.o.mp.club}): ${voteName(n.o.v)}`);
+
+  // hover (model votes only): vertical cursor + modelled P(za) = Phi(beta*x - alpha)
+  if (params) {
+    const [beta, alpha] = params;
+    const midX = (m.left + (W - m.right)) / 2;        // horizontal middle of the plot
+    const hoverLine = svg.append("line").attr("y1", m.top).attr("y2", H - m.bottom)
+      .attr("stroke", "#111").attr("stroke-width", 1).attr("opacity", 0).attr("pointer-events", "none");
+    wrap.style.position = "relative";
+    const tip = document.createElement("div");
+    tip.className = "bd-tip"; tip.hidden = true; wrap.appendChild(tip);
+    svg.on("mousemove", (event) => {
+      const [px] = d3.pointer(event, svg.node());
+      const cx = Math.max(m.left, Math.min(W - m.right, px));
+      const xv = x.invert(cx);
+      const prob = ncdf(beta * xv - alpha);
+      hoverLine.attr("x1", cx).attr("x2", cx).attr("opacity", 0.55);
+      const r = wrap.getBoundingClientRect();
+      tip.hidden = false;
+      tip.innerHTML = `x = ${xv.toFixed(2)} | Prawdopodobieństwo głosowania za: <b>${prob.toFixed(2)}</b>`;
+      tip.style.left = (event.clientX - r.left) + "px";
+      tip.style.top = (event.clientY - r.top) + "px";
+      // flip the tip across the plot's horizontal middle so it always stays in-bounds
+      tip.style.transform = (cx > midX)
+        ? "translate(calc(-100% - 8px), -130%)"        // cursor right of middle -> tip on the left
+        : "translate(8px, -130%)";                     // cursor left of middle -> tip on the right
+    }).on("mouseleave", () => { hoverLine.attr("opacity", 0); tip.hidden = true; });
+  }
 
   svg.append("text").attr("x", m.left).attr("y", H - 6).attr("class", "axis-label").text("");
   svg.append("text").attr("x", W - m.right).attr("y", H - 6).attr("text-anchor", "end")

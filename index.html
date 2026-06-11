@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Punkty idealne posłów Sejmu RP</title>
   <meta name="description" content="Bayesowska estymacja pozycji posłów Sejmu RP na głównej osi podziału, odtworzonej z głosowań imiennych (model przestrzenny / MCMC)." />
+  <link rel="icon" href="favicon.svg?v=4" type="image/svg+xml" />
   <link rel="preconnect" href="https://d3js.org" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -24,9 +25,8 @@
 
   <main>
     <section class="controls">
-      <input id="search" type="search" placeholder="Szukaj posła (np. Tusk)…" autocomplete="off" />
+      <input id="search" type="search" placeholder="Szukaj posła…" autocomplete="off" />
       <label class="toggle"><input type="checkbox" id="ci-toggle" /> przedziały ufności (90%)</label>
-      <button id="reset" class="reset">reset</button>
     </section>
 
     <section id="legend" class="legend" aria-label="Kluby"></section>
@@ -50,11 +50,10 @@
         siebie. Znak (±) jest umowny (model zakotwiczono na jednym pośle).
       </p>
       <p class="muted">
-        <strong>Co ta oś reprezentuje?</strong> Najprawdopodobniej <em>główny podział
+        <strong>Co ta oś reprezentuje?</strong> <em>Główny podział
         głosowań</em>, który w tej kadencji może odpowiadać układowi
         <strong>rząd–opozycja</strong> (kluby koalicji skupiają się na jednym biegunie,
-        opozycji na drugim). Celowo <em>nie</em> nazywamy jej „lewica–prawica" — to
-        wymagałoby przypisania partiom ideologii, czego same głosowania nie rozstrzygają.
+        opozycji na drugim).
       </p>
       <p>
         Pozycje wyłaniają się z wzorców „za/przeciw": posłowie głosujący podobnie trafiają
@@ -74,10 +73,14 @@
       Metoda: bayesowski model przestrzenny (2-parametrowy IRT / probit), estymacja MCMC
       (sampler Gibbsa z augmentacją Alberta-Chiba). Dane: głosowania imienne z
       <a href="https://api.sejm.gov.pl">api.sejm.gov.pl</a>.
+      Szczegółowy opis metody:
+      <a href="https://github.com/psephos-lab/sejm-ideal-points-model/blob/main/article/ARTICLE.md" target="_blank" rel="noopener">ARTICLE.md ↗</a>.
     </p>
     <p class="disclaimer">
       Projekt analityczno-edukacyjny. „Punkt idealny" to pozycja w przestrzeni głosowań,
       nie ocena polityka. Niepewność rośnie dla posłów rzadko głosujących.
+      Kod i dane są otwarte —
+      <a href="https://github.com/psephos-lab/sejm-ideal-points-model/tree/main" target="_blank" rel="noopener">publiczne repozytorium ↗</a>
     </p>
   </footer>
 
