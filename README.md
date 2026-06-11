@@ -31,6 +31,14 @@ z augmentacją Alberta-Chiba). Dane: głosowania imienne z [api.sejm.gov.pl](htt
 
 **Kod modelu, dane źródłowe i opis metody:** https://github.com/psephos-lab/sejm-ideal-points-model
 
+## Licencja
+
+Kod, treść i opublikowane dane wynikowe modelu — na licencji
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/): wolno je
+udostępniać i adaptować (także komercyjnie) pod warunkiem podania autorstwa
+i zachowania tej samej licencji w dziełach pochodnych. Pełny tekst w pliku
+[`LICENSE`](./LICENSE); skrót w [`NOTICE`](./NOTICE).
+
 ## Pliki
 
 - `index.html`, `style.css`, `app.js` — strona (D3.js, bez backendu i build-stepu)
