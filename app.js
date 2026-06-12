@@ -69,8 +69,8 @@ function loadTerm(key) {
       data.clubs.forEach((c) => { CLUB_MEAN[c.club] = c.mean; });
       document.getElementById("subtitle").textContent =
         `${data.meta.term} · ${data.meta.n_mps} posłów · ${data.meta.n_votes} spornych głosowań`;
-      document.getElementById("meta-line").textContent =
-        `Wygenerowano: ${data.meta.generated}. Źródło: ${data.meta.source}.`;
+      const am = document.getElementById("about-meta");
+      if (am) am.textContent = `Wygenerowano: ${data.meta.generated}.`;
       buildLegend(data);
       render();
       renderClubs(data);
@@ -565,11 +565,21 @@ function rowHtml(v, mpCode, mpClub) {
   </div>`;
 }
 
-// ---------- close handlers (history on top of profile) ----------
+// ---------- about modal ----------
+const aboutModal = document.getElementById("about");
+function openAbout() { aboutModal.hidden = false; }
+function closeAbout() { aboutModal.hidden = true; }
+document.getElementById("about-btn").addEventListener("click", openAbout);
+aboutModal.querySelector(".close").addEventListener("click", closeAbout);
+aboutModal.addEventListener("click", (e) => { if (e.target === aboutModal) closeAbout(); });
+document.getElementById("about-link").addEventListener("click", openAbout);
+
+// ---------- close handlers (about/history on top of profile) ----------
 document.getElementById("backdrop").addEventListener("click", closeProfile);
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
-  if (!document.getElementById("history").hidden) closeHistory();
+  if (!aboutModal.hidden) closeAbout();
+  else if (!document.getElementById("history").hidden) closeHistory();
   else closeProfile();
 });
 

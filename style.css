@@ -185,8 +185,37 @@ footer a { color: var(--accent); }
 .hist-more button { padding: .45rem 1rem; border: 1px solid var(--line); background: var(--card);
   border-radius: 8px; cursor: pointer; }
 
+/* ---- header bar: title + about / github links ---- */
+.header-bar { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.header-links { display: flex; align-items: center; gap: .55rem; flex: none; padding-top: .25rem; }
+.link-btn { border: 1px solid var(--line); background: var(--card); color: var(--fg);
+  font-size: .85rem; font-weight: 600; padding: .35rem .75rem; border-radius: 8px;
+  cursor: pointer; transition: background .15s; }
+.link-btn:hover { background: #f0f0f0; }
+.icon-link { display: inline-flex; align-items: center; color: var(--muted); transition: color .15s; }
+.icon-link:hover { color: var(--fg); }
+/* override the global `svg { width: 100% }` so inline icons keep their size */
+.icon-link svg { width: 20px; height: 20px; display: block; }
+.repo-link .gh { width: 18px; height: 18px; display: inline-block; }
+
+/* ---- about modal ---- */
+.about-card { max-width: 640px; overflow-y: auto; }
+.about-card h3 { margin: 1.15rem 0 .25rem; font-size: .95rem; color: var(--accent); }
+.about-card p { font-size: .9rem; color: #333; }
+.about-lead { font-size: 1rem; color: #222; }
+.about-repos { display: flex; flex-direction: column; gap: .4rem; margin: .3rem 0; }
+.repo-link { display: inline-flex; align-items: center; gap: .5rem; font-weight: 600; }
+.repo-link .gh { flex: none; }
+.about-license { font-size: .78rem; margin-top: 1rem; }
+
+/* inline text-button that looks like a link (footer "O projekcie") */
+.link-inline { border: none; background: none; color: var(--accent); cursor: pointer;
+  font: inherit; padding: 0; }
+.link-inline:hover { text-decoration: underline; }
+
 @media (max-width: 600px) {
   h1 { font-size: 1.35rem; }
+  .header-bar { flex-wrap: wrap; }
   .hist-row { grid-template-columns: 1fr; gap: .25rem; }
   .hr-votes { grid-template-columns: auto auto auto auto; }
 }

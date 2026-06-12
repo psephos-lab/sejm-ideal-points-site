@@ -11,7 +11,16 @@
 </head>
 <body>
   <header>
-    <h1>Punkty idealne posłów Sejmu</h1>
+    <div class="header-bar">
+      <h1>Punkty idealne posłów Sejmu</h1>
+      <nav class="header-links" aria-label="O projekcie">
+        <button id="about-btn" class="link-btn" type="button">O projekcie</button>
+        <a class="icon-link" href="https://github.com/psephos-lab/sejm-ideal-points-model"
+           target="_blank" rel="noopener" aria-label="Repozytorium na GitHub" title="Kod na GitHub">
+          <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+      </nav>
+    </div>
     <p class="subtitle" id="subtitle">ładowanie…</p>
     <div class="term-switch" role="group" aria-label="Wybór kadencji">
       <button class="term-btn" data-term="5" aria-pressed="false">V kadencja<small>2005–2007</small></button>
@@ -67,19 +76,71 @@
   <div id="backdrop" class="backdrop" hidden></div>
   <div id="history" class="modal" hidden aria-label="Historia głosowań"></div>
 
+  <div id="about" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="about-title">
+    <div class="modal-card about-card">
+      <button class="close" aria-label="Zamknij">×</button>
+      <h2 id="about-title">O projekcie</h2>
+
+      <p class="about-lead">
+        Interaktywna mapa pozycji posłów Sejmu na <strong>głównej osi podziału</strong>,
+        odtworzonej wyłącznie z głosowań imiennych — <strong>bez przypisywania partiom
+        etykiet ideologicznych</strong>. Sześć kadencji, od V (2005) do X (od 2023),
+        każda liczona osobnym modelem. To odpowiednik amerykańskiego
+        <a href="https://voteview.com" target="_blank" rel="noopener">Voteview ↗</a>,
+        którego dla polskiego parlamentu dotąd brakowało.
+      </p>
+
+      <h3>Metoda</h3>
+      <p>
+        Bayesowski <strong>model przestrzenny głosowań</strong> (2-parametrowy IRT / probit):
+        każdy poseł ma ukryty „punkt idealny" na osi, a każde głosowanie — siłę różnicowania
+        i próg. Pozycje wyłaniają się z samych wzorców „za / przeciw" — posłowie głosujący
+        podobnie trafiają blisko siebie. Parametry estymujemy metodą <strong>MCMC</strong>
+        (sampler Gibbsa z augmentacją danych Alberta–Chiba). Pełne wyprowadzenie i opis:
+        <a href="https://github.com/psephos-lab/sejm-ideal-points-model/blob/main/article/ARTICLE.md"
+           target="_blank" rel="noopener">ARTICLE.md ↗</a>.
+      </p>
+
+      <h3>Jak interpretować</h3>
+      <p>
+        „Punkt idealny" to <strong>pozycja w przestrzeni głosowań</strong>.
+        Oś odpowiada podziałowi <strong>rząd–opozycja</strong>.
+        Znak (±) jest umowny (model zakotwiczono na jednym pośle), skala jest
+        standaryzowana, a niepewność rośnie dla posłów głosujących rzadko.
+      </p>
+
+      <h3>Dane</h3>
+      <p>
+        Źródło: głosowania imienne z
+        <a href="https://api.sejm.gov.pl" target="_blank" rel="noopener">api.sejm.gov.pl</a>
+        — oficjalnego API Sejmu RP. <span id="about-meta" class="muted"></span>
+      </p>
+
+      <h3>Otwarty kod i dane</h3>
+      <p>
+        Projekt analityczno-edukacyjny. Cały kod, dane źródłowe i opis metody są publiczne —
+        każdy może je pobrać i samodzielnie zweryfikować wyniki.
+      </p>
+      <p class="about-repos">
+        <a class="repo-link" href="https://github.com/psephos-lab/sejm-ideal-points-model"
+           target="_blank" rel="noopener">
+          <svg class="gh" viewBox="0 0 16 16" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span>Repozytorium modelu &amp; danych ↗</span>
+        </a>
+      </p>
+      <p class="about-license muted">
+        Strona i dane: licencja CC BY-SA 4.0. „Lewica" itp. występują wyłącznie jako nazwy
+        własne klubów.
+      </p>
+    </div>
+  </div>
+
   <footer>
-    <p id="meta-line"></p>
     <p>
-      Metoda: bayesowski model przestrzenny (2-parametrowy IRT / probit), estymacja MCMC
-      (sampler Gibbsa z augmentacją Alberta-Chiba). Dane: głosowania imienne z
-      <a href="https://api.sejm.gov.pl">api.sejm.gov.pl</a>.
-      Szczegółowy opis metody:
-      <a href="https://github.com/psephos-lab/sejm-ideal-points-model/blob/main/article/ARTICLE.md" target="_blank" rel="noopener">ARTICLE.md ↗</a>.
-    </p>
-    <p class="disclaimer">
-      Projekt analityczno-edukacyjny. „Punkt idealny" to pozycja w przestrzeni głosowań. Niepewność rośnie dla posłów rzadko głosujących.
-      Kod i dane są otwarte —
-      <a href="https://github.com/psephos-lab/sejm-ideal-points-model/tree/main" target="_blank" rel="noopener">publiczne repozytorium ↗</a>
+      Projekt analityczno-edukacyjny ·
+      <button id="about-link" class="link-inline" type="button">O projekcie</button> ·
+      <a href="https://github.com/psephos-lab/sejm-ideal-points-model" target="_blank" rel="noopener">publiczne repozytorium ↗</a> ·
+      dane: <a href="https://api.sejm.gov.pl" target="_blank" rel="noopener">api.sejm.gov.pl</a>
     </p>
   </footer>
 
