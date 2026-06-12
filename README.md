@@ -13,8 +13,8 @@ Dostępne **sześć kadencji** (przełącznik u góry): od **V (2005–2007)** d
 - **Profil posła** (po kliknięciu) — pozycja z przedziałem ufności, ranga, frekwencja,
   lojalność klubowa, rozkład całej izby na tle posła, najbliżsi pozycją.
 - **Historia głosowań** — chronologiczna lista ustaw: jak głosował poseł, jak klub, wynik, link do PDF.
-- **Rozkład głosów** dla każdej ustawy — gdzie na osi leżeli głosujący „za" i „przeciw"
-  (w stylu Voteview), z krzywą modelową dla głosowań spornych.
+- **Rozkład głosów** dla każdej ustawy — gdzie na osi leżeli głosujący „za" i „przeciw",
+  z krzywą modelową dla głosowań spornych.
 
 ## Jak to czytać
 
