@@ -20,9 +20,11 @@ Dostępne **sześć kadencji** (przełącznik u góry): od **V (2005–2007)** d
 
 Pozioma oś to **główna oś podziału** wyłaniająca się z wzorców „za/przeciw" — posłowie głosujący
 podobnie leżą blisko siebie. Znak (±) jest umowny. Oś najprawdopodobniej odpowiada podziałowi
-**rząd–opozycja**; celowo **nie** nazywamy jej „lewica–prawica", bo to wymagałoby przypisania
-partiom ideologii, czego same głosowania nie rozstrzygają. „Punkt idealny" to pozycja w przestrzeni
-głosowań, **nie** ocena polityka. Niepewność rośnie dla posłów głosujących rzadko.
+**rząd–opozycja**; celowo **nie** nazywamy jej „lewica–prawica": głosowania niosą sygnał
+ideologiczny, ale wydanie ideologicznego werdyktu to ocena, której nie podejmujemy —
+dostarczamy **główną oś podziału** jako dane, a interpretację zostawiamy czytelnikowi.
+„Punkt idealny" to pozycja w przestrzeni głosowań, **nie** ocena polityka. Niepewność
+rośnie dla posłów głosujących rzadko.
 
 ## Metoda i dane
 
