@@ -37,6 +37,16 @@ h1 { margin: 0 0 .2rem; font-size: 1.7rem; }
 .term-btn.active:hover { background: var(--accent); }
 .term-btn.active small { opacity: .85; }
 
+/* institution (Sejm / Senat) segmented toggle */
+.inst-switch { display: inline-flex; border: 1px solid var(--line); border-radius: 9px;
+  background: var(--card); padding: 3px; gap: 2px; }
+.inst-btn { border: none; background: none; cursor: pointer; padding: .3rem .7rem;
+  border-radius: 7px; font-size: .9rem; font-weight: 600; color: var(--muted);
+  transition: background .15s, color .15s; }
+.inst-btn:hover { background: #f0f0f0; }
+.inst-btn.active { background: var(--accent); color: #fff; }
+.inst-btn.active:hover { background: var(--accent); }
+
 main { max-width: 1100px; margin: 0 auto; padding: 0 1.2rem 2rem; }
 
 .controls {

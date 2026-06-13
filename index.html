@@ -12,20 +12,17 @@
 <body>
   <header>
     <div class="header-bar">
-      <h1>Punkty idealne posłów Sejmu</h1>
-      <nav class="header-links" aria-label="O projekcie">
+      <h1 id="main-title">Punkty idealne posłów Sejmu</h1>
+      <nav class="header-links" aria-label="Nawigacja">
+        <div class="inst-switch" role="group" aria-label="Wybór izby">
+          <button class="inst-btn active" data-inst="sejm" aria-pressed="true">Sejm</button>
+          <button class="inst-btn" data-inst="senat" aria-pressed="false">Senat</button>
+        </div>
         <a class="link-btn" href="about.html">O projekcie</a>
       </nav>
     </div>
     <p class="subtitle" id="subtitle">ładowanie…</p>
-    <div class="term-switch" role="group" aria-label="Wybór kadencji">
-      <button class="term-btn" data-term="5" aria-pressed="false">V kadencja<small>2005–2007</small></button>
-      <button class="term-btn" data-term="6" aria-pressed="false">VI kadencja<small>2007–2011</small></button>
-      <button class="term-btn" data-term="7" aria-pressed="false">VII kadencja<small>2011–2015</small></button>
-      <button class="term-btn" data-term="8" aria-pressed="false">VIII kadencja<small>2015–2019</small></button>
-      <button class="term-btn" data-term="9" aria-pressed="false">IX kadencja<small>2019–2023</small></button>
-      <button class="term-btn" data-term="10" aria-pressed="true">X kadencja<small>od 2023</small></button>
-    </div>
+    <div class="term-switch" id="term-switch" role="group" aria-label="Wybór kadencji"></div>
   </header>
 
   <main>
@@ -49,10 +46,10 @@
     <section class="howto">
       <h2>Jak to czytać</h2>
       <p>
-        Każdy punkt to jeden poseł. Pozioma oś to <strong>główna oś podziału</strong>
+        Każdy punkt to jeden <span class="jn-one">poseł</span>. Pozioma oś to <strong>główna oś podziału</strong>
         odtworzona z samych głosowań imiennych — <strong>bez przypisywania partiom
-        etykiet ideologicznych</strong>. Posłowie głosujący podobnie trafiają blisko
-        siebie. Znak (±) jest umowny (model zakotwiczono na jednym pośle).
+        etykiet ideologicznych</strong>. <span class="jn-manyCap">Posłowie</span> głosujący podobnie trafiają blisko
+        siebie. Znak (±) jest umowny (model zakotwiczono na jednym <span class="jn-loc">pośle</span>).
       </p>
       <p class="muted">
         <strong>Co ta oś reprezentuje?</strong> <em>Główny podział
@@ -61,7 +58,7 @@
         opozycji na drugim).
       </p>
       <p>
-        Pozycje wyłaniają się z wzorców „za/przeciw": posłowie głosujący podobnie trafiają
+        Pozycje wyłaniają się z wzorców „za/przeciw": <span class="jn-many">posłowie</span> głosujący podobnie trafiają
         blisko siebie. Skala jest standaryzowana (odchylenie standardowe = 1), więc wartości
         nie mieszczą się w [−1, 1] — spójne, skrajne kluby leżą dalej.
       </p>

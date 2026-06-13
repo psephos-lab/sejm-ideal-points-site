@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>O projekcie — Punkty idealne posłów Sejmu RP</title>
-  <meta name="description" content="O projekcie: bayesowski model przestrzenny głosowań Sejmu RP (2-parametrowy IRT / probit, estymacja MCMC). Metoda, dane, interpretacja i otwarty kod." />
+  <title>O projekcie — Punkty idealne Sejmu i Senatu RP</title>
+  <meta name="description" content="O projekcie: bayesowski model przestrzenny głosowań Sejmu i Senatu RP (2-parametrowy IRT / probit, estymacja MCMC). Metoda, dane, interpretacja i otwarty kod." />
   <link rel="icon" href="favicon.svg?v=4" type="image/svg+xml" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -16,19 +16,21 @@
 
   <main class="about">
     <p class="about-lead">
-      Interaktywna mapa pozycji posłów Sejmu na <strong>głównej osi podziału</strong>,
+      Interaktywna mapa pozycji posłów i senatorów na <strong>głównej osi podziału</strong>,
       odtworzonej wyłącznie z głosowań imiennych — <strong>bez przypisywania partiom
-      etykiet ideologicznych</strong>. Sześć kadencji, od V (2005) do X (od 2023),
-      każda liczona osobnym modelem. Pierwsze tego typu publiczne, otwarte narzędzie
-      dla polskiego parlamentu.
+      etykiet ideologicznych</strong>. <strong>Sejm</strong> — sześć kadencji, od V (2005)
+      do X (od 2023); <strong>Senat</strong> — kadencje X (2019–2023) i XI (od 2023).
+      Każda izba i kadencja liczona osobnym modelem. Pierwsze tego typu publiczne,
+      otwarte narzędzie dla polskiego parlamentu.
     </p>
 
     <h2>Metoda</h2>
     <p>
       Bayesowski <strong>model przestrzenny głosowań</strong> (2-parametrowy IRT / probit):
-      każdy poseł ma ukryty „punkt idealny" na osi, a każde głosowanie — siłę różnicowania
-      i próg. Pozycje wyłaniają się z samych wzorców „za / przeciw" — posłowie głosujący
-      podobnie trafiają blisko siebie. Parametry estymujemy metodą <strong>MCMC</strong>
+      każdy parlamentarzysta (poseł lub senator) ma ukryty „punkt idealny" na osi, a każde
+      głosowanie — siłę różnicowania i próg. Pozycje wyłaniają się z samych wzorców
+      „za / przeciw" — głosujący podobnie trafiają blisko siebie. Parametry estymujemy
+      metodą <strong>MCMC</strong>
       (sampler Gibbsa z augmentacją danych Alberta–Chiba). Podejście w dużej mierze
       pokrywa się z kanoniczną metodą estymacji punktów idealnych z głosowań imiennych
       (<a href="https://www.cs.princeton.edu/courses/archive/fall09/cos597A/papers/ClintonJackmanRivers2004.pdf"
@@ -42,15 +44,17 @@
     <p>
       „Punkt idealny" to <strong>pozycja w przestrzeni głosowań</strong>.
       Oś odpowiada podziałowi <strong>rząd–opozycja</strong>.
-      Znak (±) jest umowny (model zakotwiczono na jednym pośle), skala jest
-      standaryzowana, a niepewność rośnie dla posłów głosujących rzadko.
+      Znak (±) jest umowny (model zakotwiczono na jednym parlamentarzyście), skala jest
+      standaryzowana, a niepewność rośnie dla głosujących rzadko.
     </p>
 
     <h2>Dane</h2>
     <p>
-      Źródło: głosowania imienne z
+      Źródło: głosowania imienne z oficjalnych serwisów —
       <a href="https://api.sejm.gov.pl" target="_blank" rel="noopener">api.sejm.gov.pl</a>
-      — oficjalnego API Sejmu RP. <span id="about-meta" class="muted"></span>
+      (Sejm) oraz
+      <a href="https://www.senat.gov.pl" target="_blank" rel="noopener">senat.gov.pl</a>
+      (Senat). <span id="about-meta" class="muted"></span>
     </p>
 
     <h2>Otwarty kod i dane</h2>

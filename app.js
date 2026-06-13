@@ -16,6 +16,8 @@ const CLUB_COLORS = {
   "TR": "#AD1457", "BC": "#795548", "KPSP": "#8D6E63",
   "Samoobrona": "#C9A227", "LPR": "#922B21", "RLN": "#117864",
   "Prawica": "#7E5109", "SDPL": "#CB4335", "PJN": "#2471A3", "Polska_Plus": "#5499C7",
+  // Senat (X–XI kadencja)
+  "TD": "#00A550", "NOWA-Centrum": "#1DACD6",
 };
 const color = (c) => CLUB_COLORS[c] || "#888";
 const R = 4;                                  // dot radius
@@ -31,36 +33,56 @@ let VOTES = null;                              // lazy-loaded votes.json (metada
 let MPVOTES = null;                            // lazy-loaded mp_votes.json (per-MP codes)
 let MODELPARAMS = null;                         // lazy-loaded model_params.json (beta/alpha)
 
-// Each term has its own precomputed JSON set. term10 keeps the bare filenames
-// (ideal_points.json …); other terms add a suffix (…_term9.json). `apiTerm` feeds
-// the official PDF link.
-const TERMS = {
-  "10": { label: "X kadencja", years: "od 2023",   suffix: "",       apiTerm: "term10" },
-  "9":  { label: "IX kadencja", years: "2019–2023", suffix: "_term9", apiTerm: "term9" },
-  "8":  { label: "VIII kadencja", years: "2015–2019", suffix: "_term8", apiTerm: "term8" },
-  "7":  { label: "VII kadencja", years: "2011–2015", suffix: "_term7", apiTerm: "term7" },
-  "6":  { label: "VI kadencja", years: "2007–2011", suffix: "_term6", apiTerm: "term6" },
-  "5":  { label: "V kadencja", years: "2005–2007", suffix: "_term5", apiTerm: "term5" },
+// Two chambers (instytucje), each with its own set of terms. Each term has its own
+// precomputed JSON set, selected by `suffix` (ideal_points{suffix}.json …).
+// Sejm term10 keeps the bare filenames; everything else adds a suffix.
+const INSTITUTIONS = {
+  sejm: {
+    label: "Sejm", title: "Punkty idealne posłów Sejmu", noun: "posłów", noun1: "poseł",
+    nouns: { one: "poseł", many: "posłowie", manyCap: "Posłowie", loc: "pośle" },
+    default: "10",
+    terms: {
+      "10": { label: "X kadencja", years: "od 2023",   suffix: "",       apiTerm: "term10" },
+      "9":  { label: "IX kadencja", years: "2019–2023", suffix: "_term9", apiTerm: "term9" },
+      "8":  { label: "VIII kadencja", years: "2015–2019", suffix: "_term8", apiTerm: "term8" },
+      "7":  { label: "VII kadencja", years: "2011–2015", suffix: "_term7", apiTerm: "term7" },
+      "6":  { label: "VI kadencja", years: "2007–2011", suffix: "_term6", apiTerm: "term6" },
+      "5":  { label: "V kadencja", years: "2005–2007", suffix: "_term5", apiTerm: "term5" },
+    },
+  },
+  senat: {
+    label: "Senat", title: "Punkty idealne senatorów Senatu", noun: "senatorów", noun1: "senator",
+    nouns: { one: "senator", many: "senatorowie", manyCap: "Senatorowie", loc: "senatorze" },
+    default: "s11",
+    terms: {
+      "s10": { label: "X kadencja",  years: "2019–2023", suffix: "_senat_k10" },
+      "s11": { label: "XI kadencja", years: "od 2023",   suffix: "_senat_k11" },
+    },
+  },
 };
-let CURRENT_TERM = "10";
-const sfx = () => TERMS[CURRENT_TERM].suffix;
+let CURRENT_INST = "sejm";
+let CURRENT_TERM = INSTITUTIONS.sejm.default;
+const INST = () => INSTITUTIONS[CURRENT_INST];
+const T = () => INST().terms;                       // active term set
+const sfx = () => T()[CURRENT_TERM].suffix;
 
 const tooltip = document.getElementById("tooltip");
 
 // Load (or switch to) a term: reset state, fetch its ideal_points, re-render.
 function loadTerm(key) {
-  if (!TERMS[key]) return;
+  if (!T()[key]) return;
   CURRENT_TERM = key;
 
   // reset all per-term state (clubs, lazy history data, selection differ by term)
   DATA = null; activeClub = null; selected = null;
   VOTES = MPVOTES = MODELPARAMS = null; CLUB_MEAN = {};
   closeHistory(); closeProfile();
-  const s = document.getElementById("search"); if (s) s.value = "";
+  const s = document.getElementById("search");
+  if (s) { s.value = ""; s.placeholder = `Szukaj ${INST().noun1 === "senator" ? "senatora" : "posła"}…`; }
   updateTermButtons();
-  document.getElementById("subtitle").textContent = `${TERMS[key].label} · ładowanie…`;
+  document.getElementById("subtitle").textContent = `${T()[key].label} · ładowanie…`;
 
-  fetch(`ideal_points${TERMS[key].suffix}.json`)
+  fetch(`ideal_points${T()[key].suffix}.json`)
     .then((r) => r.json())
     .then((data) => {
       if (CURRENT_TERM !== key) return;          // a newer switch superseded this load
@@ -68,7 +90,7 @@ function loadTerm(key) {
       XEXT = d3.extent(data.mps, (d) => d.x);
       data.clubs.forEach((c) => { CLUB_MEAN[c.club] = c.mean; });
       document.getElementById("subtitle").textContent =
-        `${data.meta.term} · ${data.meta.n_mps} posłów · ${data.meta.n_votes} spornych głosowań`;
+        `${data.meta.term} · ${data.meta.n_mps} ${INST().noun} · ${data.meta.n_votes} spornych głosowań`;
       buildLegend(data);
       render();
       renderClubs(data);
@@ -542,21 +564,24 @@ function partyBadge(pctZa) {
 }
 
 function rowHtml(v, mpCode, mpClub) {
-  const pdf = `https://api.sejm.gov.pl/sejm/${TERMS[CURRENT_TERM].apiTerm}/votings/${v.s}/${v.v}/pdf`;
+  // Sejm: official PDF from the API; Senat: link to the source named-vote file (v.u).
+  const src = CURRENT_INST === "senat"
+    ? (v.u ? `<a href="${v.u}" target="_blank" rel="noopener">źródło ↗</a> · ` : "")
+    : `<a href="https://api.sejm.gov.pl/sejm/${T()[CURRENT_TERM].apiTerm}/votings/${v.s}/${v.v}/pdf" target="_blank" rel="noopener">PDF ↗</a> · `;
+  const abstainTxt = (CURRENT_INST === "senat") ? "" : ` · ${v.a} wstrzym.`;
   return `<div class="hist-item">
     <div class="hist-row">
       <div class="hr-date">${v.d}</div>
       <div class="hr-votes">
-        <span class="hr-lab">poseł</span>${voteBadge(mpCode)}
+        <span class="hr-lab">${INST().noun1}</span>${voteBadge(mpCode)}
         <span class="hr-lab">klub</span>${partyBadge(v.m[mpClub])}
       </div>
       <div class="hr-main">
         <div class="hr-title">${esc(v.t)}</div>
         <div class="hr-topic">${esc(v.o)}</div>
-        <div class="hr-result">Wynik: <b class="za">${v.y}</b> za · <b class="pr">${v.n}</b> przeciw · ${v.a} wstrzym.
+        <div class="hr-result">Wynik: <b class="za">${v.y}</b> za · <b class="pr">${v.n}</b> przeciw${abstainTxt}
           ${v.c ? "" : '<span class="tag">jednomyślne</span>'}
-          · <a href="${pdf}" target="_blank" rel="noopener">PDF ↗</a>
-          · <button class="bd-toggle" data-i="${v.i}">▾ rozkład głosów</button></div>
+          · ${src}<button class="bd-toggle" data-i="${v.i}">▾ rozkład głosów</button></div>
       </div>
     </div>
     <div class="bd-wrap"></div>
@@ -581,6 +606,19 @@ window.addEventListener("resize", () => {
 });
 
 // ---------- term (kadencja) switcher ----------
+function buildTermButtons() {
+  const wrap = document.getElementById("term-switch");
+  wrap.innerHTML = "";
+  Object.entries(T()).forEach(([key, t]) => {
+    const b = document.createElement("button");
+    b.className = "term-btn";
+    b.dataset.term = key;
+    b.setAttribute("aria-pressed", key === CURRENT_TERM ? "true" : "false");
+    b.innerHTML = `${t.label}<small>${t.years}</small>`;
+    b.addEventListener("click", () => loadTerm(key));
+    wrap.appendChild(b);
+  });
+}
 function updateTermButtons() {
   document.querySelectorAll(".term-btn").forEach((b) => {
     const on = b.dataset.term === CURRENT_TERM;
@@ -588,8 +626,32 @@ function updateTermButtons() {
     b.setAttribute("aria-pressed", on ? "true" : "false");
   });
 }
-document.querySelectorAll(".term-btn").forEach((b) => {
-  b.addEventListener("click", () => loadTerm(b.dataset.term));
+
+// ---------- institution (izba) switcher ----------
+function updateHowto() {
+  const nn = INST().nouns;
+  const set = (cls, val) => document.querySelectorAll("." + cls).forEach((e) => { e.textContent = val; });
+  set("jn-one", nn.one); set("jn-many", nn.many);
+  set("jn-manyCap", nn.manyCap); set("jn-loc", nn.loc);
+}
+function loadInstitution(key) {
+  if (!INSTITUTIONS[key] || key === CURRENT_INST) return;
+  CURRENT_INST = key;
+  CURRENT_TERM = INST().default;
+  document.querySelectorAll(".inst-btn").forEach((b) => {
+    const on = b.dataset.inst === key;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  document.getElementById("main-title").textContent = INST().title;
+  updateHowto();
+  buildTermButtons();
+  loadTerm(CURRENT_TERM);
+}
+document.querySelectorAll(".inst-btn").forEach((b) => {
+  b.addEventListener("click", () => loadInstitution(b.dataset.inst));
 });
 
-loadTerm("10");   // initial load (X kadencja, default)
+// initial load (Sejm, X kadencja)
+buildTermButtons();
+loadTerm(CURRENT_TERM);
